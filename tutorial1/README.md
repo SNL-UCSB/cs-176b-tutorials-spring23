@@ -70,7 +70,7 @@ ip netns exec VRF1 ifconfig
 
 ### Try to ping one VRF form other.
 ```
-ip netns exec ping 10.10.10.2
+ip netns exec VRF1 ping 10.10.10.2
 ```
 
 Ping is not successful because there is currently no connection between two hosts.
@@ -101,10 +101,10 @@ ovs-vsctl show
 
 ### Bring up the virtual interfaces.
 ```
-ipconfig veth4 up
+ifconfig veth4 up
 ```
 ```
-ipconfig veth2 up
+ifconfig veth2 up
 ```
 
 ### Check connectivity.
