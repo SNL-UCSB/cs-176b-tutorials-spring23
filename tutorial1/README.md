@@ -82,7 +82,9 @@ ovs-vsctl add-br vSwitch1
 ```
 
 Show switch.
-``` ovs-vsctl show ```
+``` 
+ovs-vsctl show
+```
 
 ### Connect virtual interfaces with OVS switch 
 ```
@@ -113,10 +115,16 @@ ip nets exec VRF1 ping 10.10.10.2
 And it works!!!
 
 ### Assign IP address to ovs switch.
-``` ifconfig vSwitch1 10.10.10.3/24 ```
+``` 
+ifconfig vSwitch1 10.10.10.3/24 
+```
 
 With this you can ping created VRF from your machine.
-``` ping 10.10.10.1 ```
+```
+ping 10.10.10.1
+```
 
 ### Find mac address table
-``` ovs-appctl fdb/show vSwitch1 ```
+```
+ovs-appctl fdb/show vSwitch1
+```
