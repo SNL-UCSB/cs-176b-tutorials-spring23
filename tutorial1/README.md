@@ -109,7 +109,7 @@ ifconfig veth2 up
 
 ### Check connectivity.
 ```
-ip nets exec VRF1 ping 10.10.10.2
+ip netns exec VRF1 ping 10.10.10.2
 ```
 
 And it works!!!
