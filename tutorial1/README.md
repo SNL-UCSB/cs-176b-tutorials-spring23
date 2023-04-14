@@ -1,7 +1,7 @@
 
-# Tutorial 1: OVS switch
+# Tutorial 1: Open vSwitch
 
-This tutorial is about Open Virtual Switch. Today we will be creating a OVS switch, virtual interfaces and attach two hosts(linux namespaces) to the switch. Then we will tests the connections.
+This tutorial is about Open Virtual Switch. Today we will be creating a Open VSwitch, virtual interfaces and attach two hosts(linux namespaces) to the switch. Then we will tests the connections.
 
 ![ALT TEXT](https://github.com/SNL-UCSB/cs-176b-tutorials-spring23/blob/main/tutorial1/image.png?raw=true)
 
@@ -75,7 +75,7 @@ ip netns exec VRF1 ping 10.10.10.2
 
 Ping is not successful because there is currently no connection between two hosts.
 
-### Create OVS switch.
+### Create Open vSwitch.
 
 ```
 ovs-vsctl add-br vSwitch1
@@ -86,7 +86,7 @@ Show switch.
 ovs-vsctl show
 ```
 
-### Connect virtual interfaces with OVS switch 
+### Connect virtual interfaces with Open vSwitch 
 ```
 ovs-vsctl add-port vSwitch1 veth4
 ```
@@ -114,7 +114,7 @@ ip netns exec VRF1 ping 10.10.10.2
 
 And it works!!!
 
-### Assign IP address to ovs switch.
+### Assign IP address to Open vSwitch.
 ``` 
 ifconfig vSwitch1 10.10.10.3/24 
 ```
