@@ -10,7 +10,9 @@ This tutorial is about Open Virtual Switch. Today we will be creating a OVS swit
 
 ### List namespaces.
 
-``` ip netns list ```
+``` 
+ip netns list
+```
 
 ### Create 2 VRFs(name spaces) VRF1 and VRF2.
 
