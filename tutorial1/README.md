@@ -125,6 +125,8 @@ ping 10.10.10.1
 ```
 
 ### Find mac address table
+ovs-appctl command is used for for querying and controlling Open vSwitch daemon.
+
 ```
 ovs-appctl fdb/show vSwitch1
 ```
