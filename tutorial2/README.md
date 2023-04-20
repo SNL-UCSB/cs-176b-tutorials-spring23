@@ -110,3 +110,6 @@ ip netns exec VRF1 ping 10.10.10.2
 ```
 ovs-ofctl add-flow vSwitch1 "table=0, nw_src=10.10.10.1/32, nw_dst=0.10.10.2/32, actions=drop"
 ```
+```
+ip netns exec VRF1 ping 10.10.10.2
+```
