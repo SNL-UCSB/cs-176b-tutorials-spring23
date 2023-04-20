@@ -50,9 +50,9 @@ ip netns exec VRF1 ping 10.10.10.2
 ```
 Ping is not successful because there is currently no connection between two hosts.
 ### Create Open vSwitch.
-
+```
 ovs-vsctl add-br vSwitch1 -- set Bridge vSwitch1 fail-mode=secure
-
+```
 ### Show switch.
 ```
 ovs-vsctl show
