@@ -1,4 +1,4 @@
-# Tutorial 1: Open vSwitch
+# Tutorial 2: OpenFlow + OVS
 
 This tutorial is about Open Virtual Switch. Today we will be creating a Open VSwitch, virtual interfaces and attach two hosts(linux namespaces) to the switch. Then we will tests the connections.
 
