@@ -1,17 +1,20 @@
 # Tutorial 2: OpenFlow + OVS
 
-This tutorial is about Open Virtual Switch. Today we will be creating a Open VSwitch, virtual interfaces and attach two hosts(linux namespaces) to the switch. Then we will tests the connections. We will be populating switch with flow rules to change the way traffic behaves.
+This tutorial is about OpenFlow + Open VSwitch. Today we will be creating a Open VSwitch, virtual interfaces and attach two hosts(linux namespaces) to the switch(just like in tutorial 1). Then we will tests the connections. After that we will be populating switch with flow rules to change the way network traffic behaves.
 
 ![ALT TEXT](https://github.com/SNL-UCSB/cs-176b-tutorials-spring23/blob/main/tutorial1/image.png?raw=true)
 
 
 ## Steps
 
-### List namespaces.
+### List network namespaces.
+The command lists all the network namespaces on the system
 ```
 ip netns list
 ```
 ### Create 2 VRFs(name spaces) VRF1 and VRF2.
+These commands create two network namespaces named VRF1 and VRF2, respectively. Network namespaces are a Linux kernel feature that allows creating multiple virtual network stacks that operate independently and are isolated from each other.
+
 ```
 ip netns add VRF1
 ip netns add VRF2
