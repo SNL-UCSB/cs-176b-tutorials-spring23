@@ -110,8 +110,8 @@ ip netns exec VRF1 ping 10.10.10.2
 ### Forward traffic
 These two commands add OpenFlow rules to the OVS (Open vSwitch) switch named vSwitch1. The first command adds a rule that matches packets coming from veth4 as the input port with a priority of 10 and forwards them to veth2. The second command adds a rule that matches packets coming from veth2 as the input port with a priority of 10 and forwards them to veth4. These rules essentially create a bidirectional communication channel between the two veth interfaces by forwarding packets between them through the OVS switch.
 ```
-ovs-ofctl add-flow vSwitch1 "table=0, priority=10, in_port=veth4, actions=veth2"
-ovs-ofctl add-flow vSwitch1 "table=0, priority=10, in_port=veth2, actions=veth4"
+ovs-ofctl add-flow vSwitch1 "table=0, priority=10, in_port=4, actions=2"
+ovs-ofctl add-flow vSwitch1 "table=0, priority=10, in_port=2, actions=4"
 ```
 ### Check connectivity.
 What should happen now?
