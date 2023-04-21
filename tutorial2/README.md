@@ -136,7 +136,7 @@ The ping should fail.
 
 Now you can try adding a rule with higher pirority again.
 ```
-ovs-ofctl add-flow vSwitch1 "table=0, priority=10, in_port=2, actions=4"
+ovs-ofctl add-flow vSwitch1 "table=0, priority=30, in_port=2, actions=4"
 ```
 Lets delete the flow entries now.
 ```
