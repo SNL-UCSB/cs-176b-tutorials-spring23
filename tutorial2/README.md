@@ -122,7 +122,7 @@ ip netns exec VRF1 ping 10.10.10.2
 ### Drop ICMP
 Below command adds a flow rule to table 0 of the Open vSwitch named vSwitch1. The rule has a priority of 20, which means it has a lower priority than other rules with a higher number. The rule matches any ICMP traffic coming into the switch from the veth4 port and drops it. ICMP packets are used by network devices such as routers and hosts to communicate with each other about network conditions and to diagnose network problems.
 ```
-ovs-ofctl add-flow vSwitch1 "table=0, priority=20, icmp in_port=veth4, actions=drop"
+ovs-ofctl add-flow vSwitch1 "table=0, priority=20, icmp in_port=4, actions=drop"
 ```
 Below command runs a ping test from the VRF1 network namespace to the IP address 10.10.10.2. The ip netns exec command is used to run a command inside a network namespace.
 ```
