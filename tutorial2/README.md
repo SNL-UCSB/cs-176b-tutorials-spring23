@@ -87,8 +87,8 @@ ovs-vsctl show
 ### Connect virtual interfaces with Open vSwitch
 These commands add the two virtual Ethernet interfaces (veth4 and veth2) as ports to the Open vSwitch bridge vSwitch1. This will allow traffic to flow between the two interfaces and the bridge.
 ```
-ovs-vsctl add-port vSwitch1 veth4
-ovs-vsctl add-port vSwitch1 veth2
+ovs-vsctl add-port vSwitch1 veth4 -- set Interface veth4 ofport_request=4
+ovs-vsctl add-port vSwitch1 veth2 -- set Interface veth2 ofport_request=2
 ```
 Show switch again. you will see the new ports added.
 ```
@@ -97,8 +97,8 @@ ovs-vsctl show
 ### Bring up the virtual interfaces.
 Activate the network interfaces veth4 and veth2, respectively.
 ```
-ifconfig veth4 up
-ifconfig veth2 up
+ovs-ofctl mod-port vSwitch1 veth2 up
+ovs-ofctl mod-port vSwitch1 veth4 up
 ```
 ### Check connectivity.
 
