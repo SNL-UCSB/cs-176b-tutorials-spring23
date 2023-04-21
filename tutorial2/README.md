@@ -145,11 +145,11 @@ ovs-ofctl del-flows vSwitch1
 
 Below command adds flow rule to table 0 of the Open vSwitch named vSwitch1. The rule matches any traffic with a source IP address of 10.10.10.1 and a destination IP address of 10.10.10.2 and sents the traffic to port 4.
 ```
-ovs-ofctl add-flow vSwitch1 "table=0, priority=10,,nw_src=10.10.10.1/24, nw_dst=0.10.10.2/24, actions=4"
+ovs-ofctl add-flow vSwitch1 "table=0, priority=10,ip,nw_src=10.10.10.1, nw_dst=0.10.10.2, actions=4"
 ```
 Below command adds flow rule to table 0 of the Open vSwitch named vSwitch1. The rule matches any traffic with a source IP address of 10.10.10.2 and a destination IP address of 10.10.10.1 and sents the traffic to port 2.
 ```
-ovs-ofctl add-flow vSwitch1 "table=0, priority=10,,nw_src=10.10.10.2/24, nw_dst=0.10.10.1/24, actions=2"
+ovs-ofctl add-flow vSwitch1 "table=0, priority=10,ip,nw_src=10.10.10.2, nw_dst=0.10.10.1, actions=2"
 ```
 Below command runs another ping test from the VRF1 network namespace to the IP address 10.10.10.2
 ```
@@ -157,6 +157,6 @@ ip netns exec VRF1 ping 10.10.10.2
 ```
 Below command adds flow rule to table 0 of the Open vSwitch named vSwitch1. The rule matches any traffic with a source IP address of 10.10.10.1 and a destination IP address of 10.10.10.2 and drops it.
 ```
-ovs-ofctl add-flow vSwitch1 "table=0, priority=10,,nw_src=10.10.10.1/24, nw_dst=0.10.10.2/24, actions=drop"
+ovs-ofctl add-flow vSwitch1 "table=0, priority=10,ip,nw_src=10.10.10.1, nw_dst=0.10.10.2, actions=drop"
 ```
 Since the previous flow rule drops all traffic from the source IP address 10.10.10.1 to 10.10.10.2, this ping test should fail.
