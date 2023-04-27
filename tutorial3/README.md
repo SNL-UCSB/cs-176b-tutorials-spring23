@@ -1,7 +1,7 @@
 # Tutorial 3
 
-In this tutorila we will create a basic topology consisting of 2 hosts and a switch just like in the previous tutorials. To do this we will be using mininet.
-
+In this tutorial we will create a basic topology consisting of 2 hosts and a switch just like in the previous tutorials. To do this we will be using mininet. For mininet documentation go [here](http://mininet.org/walkthrough/).
+![ALT TEXT](https://raw.githubusercontent.com/SNL-UCSB/cs-176b-tutorials-spring23/main/tutorial3/Screenshot%20from%202023-04-27%2014-02-15.png)
 
 ## Writing basic Python script that demonstrates how to create a simple network using the Mininet
 
