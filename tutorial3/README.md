@@ -109,9 +109,14 @@ These are just a few of the many commands that are available in Mininet. You can
 ## Changing network conditions.
 For this part of the tutorial lets play around with the network latency.
 ### Add Links with custom latencies.
+Import TCLink. The TCLink class is a subclass of the Link class in Mininet. It is used to create links between nodes in a Mininet network with specified bandwidth, delay, loss, and other characteristics. The TCLink class uses the Linux Traffic Control (tc) command to configure the characteristics of the link.
+```
+from mininet.link import TCLink
+```
+
 Modify the previously written code to specify delay when adding link.
 ```
-net.addLink( h1, s3, delay='50ms' )
+net.addLink( h1, s3, cls=TCLink, delay='50ms' )
 ```
 ### Create the topology again.
 ```
