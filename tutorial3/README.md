@@ -127,7 +127,7 @@ Check latency by executing the following command in mininet CLI.
 ```
 h1 ping h2
 ```
-There should be a delay of aproximately 50 ms.
+There should be a delay of more than 100 ms. Why 100ms?
 # Acknowledgement
 
-The example for this tutorial has been taken from [here](https://github.com/mininet/mininet/tree/master/examples) with some minor changes. Apart from that this is a great resource  that demonstrate different mininet features.
+The example for this tutorial has been taken from [here](https://github.com/mininet/mininet/tree/master/examples) with some minor changes. Apart from that this is a great resource that demonstrates different mininet features.
