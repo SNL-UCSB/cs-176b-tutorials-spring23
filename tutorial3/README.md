@@ -1,6 +1,6 @@
 # Tutorial 3
 
-In this tutorial we will create a basic topology consisting of 2 hosts and a switch just like in the previous tutorials. To do this we will be using mininet. For mininet documentation go [here](http://mininet.org/walkthrough/).
+In this tutorial, we will create a basic topology consisting of 2 hosts and a switch just like in the previous tutorials. To do this we will be using mininet. For mininet documentation go [here](http://mininet.org/walkthrough/).
 
 
 
@@ -57,7 +57,7 @@ s3 = net.addSwitch( 's3' )
 ```
 
 ### Add Links
-Below code create links between the hosts and the switch in the Mininet network topology. The addLink function of the net object is used to create the links.
+Below code creates links between the hosts and the switch in the Mininet network topology. The addLink function of the net object is used to create the links.
 
 In Mininet, links connect hosts to switches and switches to other switches to form a network topology.
 ```
