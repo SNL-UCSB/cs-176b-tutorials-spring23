@@ -21,12 +21,7 @@ We will use the following topology for this exercise. It is a single
 pod of a fat-tree topology and henceforth referred to as pod-topo:
 ![pod-topo](./pod-topo/pod-topo.png)
 
-Our P4 program will be written for the V1Model architecture implemented
-on P4.org's bmv2 software switch. The architecture file for the V1Model
-can be found at: /usr/local/share/p4c/p4include/v1model.p4. This file
-desribes the interfaces of the P4 programmable elements in the architecture,
-the supported externs, as well as the architecture's standard metadata
-fields. We encourage you to take a look at it.
+
 
 ## Step 1: Run the (incomplete) starter code
 
