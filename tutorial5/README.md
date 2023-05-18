@@ -16,4 +16,4 @@ Steps:
 table_add MyIngress.ipv4_lpm MyIngress.ipv4_forward 10.0.1.1/32 => 08:00:00:00:01:11 1
 table_add MyIngress.ipv4_lpm MyIngress.ipv4_forward 10.0.2.2/32 => 08:00:00:00:02:22 2
 ```
-3) We will run `pingall 1` again. What should happen? 
+5) We will run `pingall 1` again. What should happen? 
