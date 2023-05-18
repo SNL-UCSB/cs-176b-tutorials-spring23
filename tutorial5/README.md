@@ -9,7 +9,7 @@ where `h1`, `h2` are P4Hosts and `s1` is the P4Switch
 Steps:
 
 1) We will write a simple p4 program that forwards packets based on longest prefix match.
-2) After we are done writing the P4 program, we will run make run in the tutorial-5 directory and a mininet session will start.
+2) After we are done writing the P4 program, we will run `make run` in the tutorial-5 directory and a mininet session will start.
 3) We will run `pingall 1`(hosts shouldn't be able to communicate with each other). 
 4) Next, we will open the switch CLI using the cmd `simple_switch_CLI --thrift-port 9090`, and then we will install the following runtime commands:
 ```
