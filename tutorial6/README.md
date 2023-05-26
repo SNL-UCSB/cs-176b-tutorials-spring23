@@ -1,9 +1,9 @@
-# Implementing Basic Tunneling
+# Tutorial6: Implementing Basic Tunneling + Brief overview about cloning
 
 ## Introduction
 
 In this exercise, we will add support for a basic tunneling protocol to the IP
-router that you completed in the previous assignment.  The basic switch
+router.  The basic switch
 forwards based on the destination IP address.  Your jobs is to define a new
 header type to encapsulate the IP packet and modify the switch code, so that it
 instead decides the destination port using a new tunnel header.
@@ -142,3 +142,32 @@ the background. Use the following command to clean up these instances:
 ```bash
 make stop
 ```
+
+
+#### Brief overview about cloning
+
+##### Clone Extern defination:
+```
+extern void clone(in CloneType type, in bit<32> session);
+```
+
+##### Clone type:
+```
+enum CloneType {
+    I2E,
+    E2E
+}
+```
+##### Session Id:
+The session parameter is an integer identifying a clone session id
+(sometimes called a mirror session id).  The control plane software
+must configure each session you wish to use, or else no clones will
+be made using that session.
+
+##### Call and indentify clonned packets:
+```
+clone(CloneType.E2E, 300)
+```
+
+To indentify if a packet is clonned you can check the `standard_metadata.instance_type`. If its value is 1 it means that the packet is a clonned packet.
+
