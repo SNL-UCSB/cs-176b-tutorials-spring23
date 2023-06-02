@@ -2,9 +2,13 @@
 #include <core.p4>
 #include <v1model.p4>
 
-// NOTE: new type added here
-const bit<16> TYPE_MYTUNNEL = 0x1212;
+/* CONSTANTS */
+
 const bit<16> TYPE_IPV4 = 0x800;
+const bit<8>  TYPE_TCP  = 6;
+
+#define BLOOM_FILTER_ENTRIES 4096
+#define BLOOM_FILTER_BIT_WIDTH 1
 
 /*************************************************************************
 *********************** H E A D E R S  ***********************************
@@ -18,12 +22,6 @@ header ethernet_t {
     macAddr_t dstAddr;
     macAddr_t srcAddr;
     bit<16>   etherType;
-}
-
-// NOTE: added new header type
-header myTunnel_t {
-    bit<16> proto_id;
-    bit<16> dst_id;
 }
 
 header ipv4_t {
@@ -41,22 +39,40 @@ header ipv4_t {
     ip4Addr_t dstAddr;
 }
 
+header tcp_t{
+    bit<16> srcPort;
+    bit<16> dstPort;
+    bit<32> seqNo;
+    bit<32> ackNo;
+    bit<4>  dataOffset;
+    bit<4>  res;
+    bit<1>  cwr;
+    bit<1>  ece;
+    bit<1>  urg;
+    bit<1>  ack;
+    bit<1>  psh;
+    bit<1>  rst;
+    bit<1>  syn;
+    bit<1>  fin;
+    bit<16> window;
+    bit<16> checksum;
+    bit<16> urgentPtr;
+}
+
 struct metadata {
     /* empty */
 }
 
-// NOTE: Added new header type to headers struct
 struct headers {
     ethernet_t   ethernet;
-    myTunnel_t   myTunnel;
     ipv4_t       ipv4;
+    tcp_t        tcp;
 }
 
 /*************************************************************************
 *********************** P A R S E R  ***********************************
 *************************************************************************/
 
-// TODO: Update the parser to parse the myTunnel header as well
 parser MyParser(packet_in packet,
                 out headers hdr,
                 inout metadata meta,
@@ -69,27 +85,23 @@ parser MyParser(packet_in packet,
     state parse_ethernet {
         packet.extract(hdr.ethernet);
         transition select(hdr.ethernet.etherType) {
-            TYPE_MYTUNNEL: parse_myTunnel;
-            TYPE_IPV4 : parse_ipv4;
-            default : accept;
+            TYPE_IPV4: parse_ipv4;
+            default: accept;
         }
-    }
-
-    state parse_myTunnel {
-        packet.extract(hdr.myTunnel);
-        transition select(hdr.myTunnel.proto_id) {
-            TYPE_IPV4 : parse_ipv4;
-            default : accept;
-        }
-
     }
 
     state parse_ipv4 {
         packet.extract(hdr.ipv4);
-        transition accept;
+        transition select(hdr.ipv4.protocol){
+            TYPE_TCP: tcp;
+            default: accept;
+        }
     }
 
-
+    state tcp {
+       packet.extract(hdr.tcp);
+       transition accept;
+    }
 }
 
 /*************************************************************************
@@ -108,10 +120,34 @@ control MyVerifyChecksum(inout headers hdr, inout metadata meta) {
 control MyIngress(inout headers hdr,
                   inout metadata meta,
                   inout standard_metadata_t standard_metadata) {
+
+    register<bit<BLOOM_FILTER_BIT_WIDTH>>(BLOOM_FILTER_ENTRIES) bloom_filter_1;
+    register<bit<BLOOM_FILTER_BIT_WIDTH>>(BLOOM_FILTER_ENTRIES) bloom_filter_2;
+    bit<32> reg_pos_one; bit<32> reg_pos_two;
+    bit<1> reg_val_one; bit<1> reg_val_two;
+    bit<1> direction;
+
     action drop() {
         mark_to_drop(standard_metadata);
     }
-    
+
+    action compute_hashes(ip4Addr_t ipAddr1, ip4Addr_t ipAddr2, bit<16> port1, bit<16> port2){
+       //Get register position
+       hash(reg_pos_one, HashAlgorithm.crc16, (bit<32>)0, {ipAddr1,
+                                                           ipAddr2,
+                                                           port1,
+                                                           port2,
+                                                           hdr.ipv4.protocol},
+                                                           (bit<32>)BLOOM_FILTER_ENTRIES);
+
+       hash(reg_pos_two, HashAlgorithm.crc32, (bit<32>)0, {ipAddr1,
+                                                           ipAddr2,
+                                                           port1,
+                                                           port2,
+                                                           hdr.ipv4.protocol},
+                                                           (bit<32>)BLOOM_FILTER_ENTRIES);
+    }
+
     action ipv4_forward(macAddr_t dstAddr, egressSpec_t port) {
         standard_metadata.egress_spec = port;
         hdr.ethernet.srcAddr = hdr.ethernet.dstAddr;
@@ -132,33 +168,56 @@ control MyIngress(inout headers hdr,
         default_action = drop();
     }
 
-    // TODO: declare a new action: myTunnel_forward(egressSpec_t port)
-    action myTunnel_forward(egressSpec_t port) {
-        standard_metadata.egress_spec = port;
-        clone(CloneType.I2E, 300)
+    action set_direction(bit<1> dir) {
+        direction = dir;
     }
 
-    // TODO: declare a new table: myTunnel_exact
-    table myTunnel_exact {
+    table check_ports {
         key = {
-            hdr.myTunnel.dst_id: exact;
+            standard_metadata.ingress_port: exact;
+            standard_metadata.egress_spec: exact;
         }
-        action = {
-            myTunnel_forward;
-            drop;
+        actions = {
+            set_direction;
+            NoAction;
         }
         size = 1024;
-        default_action = drop();
-
-    } 
-
+        default_action = NoAction();
+    }
+    
     apply {
-        // TODO: Update control flow
-        if (hdr.ipv4.isValid() && !hdr.myTunnel.isValid()) {
+        if (hdr.ipv4.isValid()){
             ipv4_lpm.apply();
-        }
-        if (hdr.myTunnel.isValid()) {
-            myTunnel_exact.apply();
+            if (hdr.tcp.isValid()){
+                direction = 0; // default
+                if (check_ports.apply().hit) {
+                    // test and set the bloom filter
+                    if (direction == 0) {
+                        compute_hashes(hdr.ipv4.srcAddr, hdr.ipv4.dstAddr, hdr.tcp.srcPort, hdr.tcp.dstPort);
+                    }
+                    else {
+                        compute_hashes(hdr.ipv4.dstAddr, hdr.ipv4.srcAddr, hdr.tcp.dstPort, hdr.tcp.srcPort);
+                    }
+                    // Packet comes from internal network
+                    if (direction == 0){
+                        // If there is a syn we update the bloom filter and add the entry
+                        if (hdr.tcp.syn == 1){
+                            bloom_filter_1.write(reg_pos_one, 1);
+                            bloom_filter_2.write(reg_pos_two, 1);
+                        }
+                    }
+                    // Packet comes from outside
+                    else if (direction == 1){
+                        // Read bloom filter cells to check if there are 1's
+                        bloom_filter_1.read(reg_val_one, reg_pos_one);
+                        bloom_filter_2.read(reg_val_two, reg_pos_two);
+                        // only allow flow to pass if both entries are set
+                        if (reg_val_one != 1 || reg_val_two != 1){
+                            drop();
+                        }
+                    }
+                }
+            }
         }
     }
 }
@@ -170,11 +229,7 @@ control MyIngress(inout headers hdr,
 control MyEgress(inout headers hdr,
                  inout metadata meta,
                  inout standard_metadata_t standard_metadata) {
-    apply {  
-        if (standard_metadata.instance_type == 1) {
-            // do stuff
-        }
-    }
+    apply {  }
 }
 
 /*************************************************************************
@@ -208,9 +263,8 @@ control MyComputeChecksum(inout headers  hdr, inout metadata meta) {
 control MyDeparser(packet_out packet, in headers hdr) {
     apply {
         packet.emit(hdr.ethernet);
-        // TODO: emit myTunnel header as well
-        packet.emit(hdr.myTunnel);
         packet.emit(hdr.ipv4);
+        packet.emit(hdr.tcp);
     }
 }
 
