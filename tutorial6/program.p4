@@ -69,20 +69,11 @@ parser MyParser(packet_in packet,
     state parse_ethernet {
         packet.extract(hdr.ethernet);
         transition select(hdr.ethernet.etherType) {
-            TYPE_MYTUNNEL: parse_myTunnel;
             TYPE_IPV4 : parse_ipv4;
             default : accept;
         }
     }
 
-    state parse_myTunnel {
-        packet.extract(hdr.myTunnel);
-        transition select(hdr.myTunnel.proto_id) {
-            TYPE_IPV4 : parse_ipv4;
-            default : accept;
-        }
-
-    }
 
     state parse_ipv4 {
         packet.extract(hdr.ipv4);
@@ -133,33 +124,16 @@ control MyIngress(inout headers hdr,
     }
 
     // TODO: declare a new action: myTunnel_forward(egressSpec_t port)
-    action myTunnel_forward(egressSpec_t port) {
-        standard_metadata.egress_spec = port;
-        clone(CloneType.I2E, 300)
-    }
-
+    
     // TODO: declare a new table: myTunnel_exact
-    table myTunnel_exact {
-        key = {
-            hdr.myTunnel.dst_id: exact;
-        }
-        action = {
-            myTunnel_forward;
-            drop;
-        }
-        size = 1024;
-        default_action = drop();
-
-    } 
+    
 
     apply {
         // TODO: Update control flow
-        if (hdr.ipv4.isValid() && !hdr.myTunnel.isValid()) {
+        if (hdr.ipv4.isValid() ) {
             ipv4_lpm.apply();
         }
-        if (hdr.myTunnel.isValid()) {
-            myTunnel_exact.apply();
-        }
+       
     }
 }
 
@@ -170,11 +144,7 @@ control MyIngress(inout headers hdr,
 control MyEgress(inout headers hdr,
                  inout metadata meta,
                  inout standard_metadata_t standard_metadata) {
-    apply {  
-        if (standard_metadata.instance_type == 1) {
-            // do stuff
-        }
-    }
+    apply {  }
 }
 
 /*************************************************************************
@@ -209,7 +179,7 @@ control MyDeparser(packet_out packet, in headers hdr) {
     apply {
         packet.emit(hdr.ethernet);
         // TODO: emit myTunnel header as well
-        packet.emit(hdr.myTunnel);
+        
         packet.emit(hdr.ipv4);
     }
 }
