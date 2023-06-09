@@ -1,7 +1,7 @@
 from scapy.all import *
 
 NORMAL_PACKET_COUNT = 6
-ATTACK_PACKET_COUNT = 10
+ATTACK_PACKET_COUNT = 13
 
 IFACE = "eth0"
 
