@@ -31,8 +31,8 @@ def main():
     sniff(iface="eth0", prn=lambda x: handle_pkt(x), timeout=90)
     
     if len(OUT_DATA) >= 1:
-        #working_dir = '/home/vagrant/cs176b-tutorials/tutorial8'
-        with open('switch_stats.csv'.format(working_dir), 'w') as fp:
+        
+        with open('switch_stats.csv', 'w') as fp:
             fp.write('\n'.join(OUT_DATA)+'\n')
 
     return
